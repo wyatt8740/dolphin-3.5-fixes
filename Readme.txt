@@ -1,3 +1,38 @@
+(Modifications by Wyatt Ward)
+This is just a fork of Dolphin 3.5 which aims to be more easily built under
+newer Linux systems. It may also be useful for users of other OSes, but I
+only really target Linux.
+
+My computer has an Ironlake GPU, which no one has yet made OpenGL 3.0 drivers
+for (despite it being capable of all but one feature of OGL 3). As a result,
+I am stuck on old versions of Dolphin, but SDL2 support was broken in 3.5's
+source code (which was written before it was finalized, back when it was called
+SDL 1.3). 3.5 would crash upon starting a game or attempting to configure
+gamecube controllers, but SDL 2 was required for controller rumble support, so
+I couldn't just built it for SDL 1.2.
+
+This version takes some code from a later version of Dolphin for input devices,
+and modifies it where it was still incompatible (for instance,
+'SDL_HAPTIC_SQUARE' (square wave rumble) was replaced with SDL_HAPTIC_LEFTRIGHT
+(which gives the illusion of an unevenly weighted controller when a controller
+has multiple motors, like the XBox 360 pad).
+
+Unfortunately, because FFMpeg API breakage gives me a headache, and for other
+reasons like not wanting to spend even more time than I already have fixing
+five years of code rot, this is easiest to build in a chroot. I built it
+in Debian Wheezy with SDL 2.0, WxWidgets 2.9.5, and FFmpeg 1.0.1 compiled
+from source code by myself, and then set LD_LIBRARY_PATH when running the
+emulator outside of the chroot to tell it where its necessary older libraries
+were. Libav (which is in the Debian Wheezy repositories) may or may not work as
+a drop-in for FFmpeg (My guess is that it won't... but I'm not fond of Libav).
+
+to 'install' it, I've been making a folder called 'instdir', and then running
+`make install /path/to/instdir` to get it to install in an isolated
+environment.
+
+(--Wyatt Ward, 21 March 2018)
+
+
 Dolphin-emu - The Gamecube / Wii Emulator
 ==========================================
 Homesite: http://dolphin-emu.org/
