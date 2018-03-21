@@ -1,3 +1,6 @@
+
+Dolphin 3.5 Fixes
+=================
 (Modifications by Wyatt Ward)
 This is just a fork of Dolphin 3.5 which aims to be more easily built under
 newer Linux systems. It may also be useful for users of other OSes, but I
@@ -17,22 +20,45 @@ and modifies it where it was still incompatible (for instance,
 (which gives the illusion of an unevenly weighted controller when a controller
 has multiple motors, like the XBox 360 pad).
 
+BUILDING
+--------
 Unfortunately, because FFMpeg API breakage gives me a headache, and for other
 reasons like not wanting to spend even more time than I already have fixing
-five years of code rot, this is easiest to build in a chroot. I built it
-in Debian Wheezy with SDL 2.0, WxWidgets 2.9.5, and FFmpeg 1.0.1 compiled
-from source code by myself, and then set LD_LIBRARY_PATH when running the
-emulator outside of the chroot to tell it where its necessary older libraries
-were. Libav (which is in the Debian Wheezy repositories) may or may not work as
-a drop-in for FFmpeg (My guess is that it won't... but I'm not fond of Libav).
+five years of code rot, this is easiest to build in a chroot.
 
-to 'install' it, I've been making a folder called 'instdir', and then running
+I built it successfully in a Debian Wheezy chroot with SDL 2.0, WxWidgets
+2.9.5, and FFmpeg 1.0.1 compiled from source code. The rest of the dependencies
+were satisfied by the Wheezy debian packages.
+
+Using an older version of GCC will make your life easier, too, but with further
+patching (things like NULL comparisons to C++ objects, IIRC), newer versions
+may be used.
+
+Next, I set LD_LIBRARY_PATH when running the emulator outside of the chroot to
+tell it where its necessary older libraries were. Example:
+
+    LD_LIBRARY_PATH=/path/to/wheezy/libs
+
+I just ran `ldd dolphin-emu` on the compiled program and looked for 'not found'
+entries to determine which libraries I needed to copy. Copying ALL libraries
+from the chroot caused a lot of problems for me, such as all text in the GUI
+being hollow rectangles. I therefore recommend only copying the necessary
+libraries out. As a final note, make sure you're getting the library itself,
+and not just a symlink to one.
+
+Libav (which is in the Debian Wheezy repositories) may or may not work as a
+drop-in for FFmpeg (My guess is that it won't... but I'm not fond of Libav and
+never expect it to work as well as FFmpeg).
+
+To 'install' it, I've been making a folder called 'instdir', and then running
 `make install /path/to/instdir` to get it to install in an isolated
-environment.
+environment. I then made a tarball from it, copied it out of the chroot, and
+wrote a wrapper script to automatically set LD_LIBRARY_PATH for me.
 
 (--Wyatt Ward, 21 March 2018)
 
-
+Original Readme.txt:
+```
 Dolphin-emu - The Gamecube / Wii Emulator
 ==========================================
 Homesite: http://dolphin-emu.org/
@@ -102,3 +128,4 @@ ScreenShots: screenshots are saved here
 Shaders: post-processing shaders
 StateSaves: save states are stored here
 Wii: Wii saves and config is stored here
+```
